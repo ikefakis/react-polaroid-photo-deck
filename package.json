@@ -1,7 +1,7 @@
 {
-  "name": "new",
+  "name": "react-polaroid-photo-deck",
   "version": "1.0.0",
-  "description": "",
+  "description": "A beautiful polaroid style photo deck",
   "keywords": [],
   "homepage": "/",
   "main": "src/index.js",
