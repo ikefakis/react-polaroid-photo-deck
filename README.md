@@ -18,3 +18,7 @@ _See [https://r1c2n.csb.app](https://r1c2n.csb.app) for a demo._
 ## Build
 
 - `$ npm run build` - An optimized production build will be generated in `build` folder.
+
+## Deploy
+
+- `$ npm run deploy` - Deploy to github pages.
