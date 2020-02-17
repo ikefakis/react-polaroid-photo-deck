@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/react-polaroid-photo-deck/static/css/main.9faa7e72.chunk.css",
+    "main.js": "/react-polaroid-photo-deck/static/js/main.73194c59.chunk.js",
+    "main.js.map": "/react-polaroid-photo-deck/static/js/main.73194c59.chunk.js.map",
+    "runtime-main.js": "/react-polaroid-photo-deck/static/js/runtime-main.d5a0729f.js",
+    "runtime-main.js.map": "/react-polaroid-photo-deck/static/js/runtime-main.d5a0729f.js.map",
+    "static/js/2.7e458c1e.chunk.js": "/react-polaroid-photo-deck/static/js/2.7e458c1e.chunk.js",
+    "static/js/2.7e458c1e.chunk.js.map": "/react-polaroid-photo-deck/static/js/2.7e458c1e.chunk.js.map",
+    "index.html": "/react-polaroid-photo-deck/index.html",
+    "precache-manifest.4ce92309e1db1fc8dfb6a9bb402509a4.js": "/react-polaroid-photo-deck/precache-manifest.4ce92309e1db1fc8dfb6a9bb402509a4.js",
+    "service-worker.js": "/react-polaroid-photo-deck/service-worker.js",
+    "static/css/main.9faa7e72.chunk.css.map": "/react-polaroid-photo-deck/static/css/main.9faa7e72.chunk.css.map",
+    "static/js/2.7e458c1e.chunk.js.LICENSE.txt": "/react-polaroid-photo-deck/static/js/2.7e458c1e.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d5a0729f.js",
+    "static/js/2.7e458c1e.chunk.js",
+    "static/css/main.9faa7e72.chunk.css",
+    "static/js/main.73194c59.chunk.js"
+  ]
+}
