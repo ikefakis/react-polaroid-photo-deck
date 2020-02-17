@@ -3,7 +3,7 @@
 ![alt text](https://github.com/ikefakis/react-polaroid-photo-deck/raw/master/docs/repository-image.png "Polaroid style photo deck")
 
 A beautiful polaroid style photo deck.
-_See [https://r1c2n.csb.app](https://r1c2n.csb.app) for a demo._
+_See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
 
 ## Getting Started
 
@@ -18,3 +18,7 @@ _See [https://r1c2n.csb.app](https://r1c2n.csb.app) for a demo._
 ## Build
 
 - `$ npm run build` - An optimized production build will be generated in `build` folder.
+
+## Deploy
+
+- `$ npm run deploy` - Deploy to github pages.
