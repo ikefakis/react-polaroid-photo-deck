@@ -1,0 +1,22 @@
+[
+    {
+        "url": "05.jpg",
+        "orientation": "portrait"
+    },
+    {
+        "url": "04.jpg",
+        "orientation": "landscape"
+    },
+    {
+        "url": "03.jpg",
+        "orientation": "portrait"
+    },
+    {
+        "url": "02.jpg",
+        "orientation": "landscape"
+    },
+    {
+        "url": "01.jpg",
+        "orientation": "portrait"
+    }
+]

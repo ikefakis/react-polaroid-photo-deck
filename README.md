@@ -13,7 +13,7 @@ _See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
 
 ## Customization
 
-- Put your images in `public/img` folder and update the paths inside `photos.js`
+- Put your images in `public/img` folder and update the paths inside `photos.json` with orientation info: (portrait | landscape)
 
 ## Build
 
