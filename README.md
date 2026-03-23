@@ -21,4 +21,4 @@ _See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
 
 ## Deploy
 
-- `$ npm run deploy` - Deploy to github pages.
+- Push to `main` to trigger the GitHub Actions workflow that builds the app and deploys `dist` to GitHub Pages.
