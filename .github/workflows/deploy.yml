@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: pages
@@ -27,13 +28,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
       - name: Build
         run: npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ./dist
 
   deploy:
     needs: build
