@@ -47,7 +47,7 @@ export default function Deck({ cards }) {
             {...bind(i)}
             style={{
               transform: interpolate([rot, scale], utils.trans),
-              backgroundImage: `url(img/${cards[i].url})`,
+              backgroundImage: `url(${import.meta.env.BASE_URL}img/${cards[i].url})`,
               width: cards[i].orientation === 'portrait' ? '240px' : '320px',
               height: cards[i].orientation === 'portrait' ? '320px' : '240px'
             }}
