@@ -68,7 +68,9 @@ export default function Deck({ cards }) {
 
     return () => {
       isMounted = false
-      window.cancelAnimationFrame(animationFrameId)
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
     }
   }, [api, cards])
 
