@@ -7,8 +7,32 @@ import * as utils from './utils'
 import './styles.css'
 import PHOTOS from './photos.json'
 
+const IMAGE_LOAD_TIMEOUT_MS = 5000
+
 function getCardOrientation(detectedOrientation) {
   return detectedOrientation ?? 'portrait'
+}
+
+function loadCardOrientation(card) {
+  return new Promise((resolve) => {
+    const image = new Image()
+    const timeoutId = window.setTimeout(() => {
+      image.onload = null
+      image.onerror = null
+      resolve(null)
+    }, IMAGE_LOAD_TIMEOUT_MS)
+
+    const resolveOrientation = (orientation) => {
+      window.clearTimeout(timeoutId)
+      image.onload = null
+      image.onerror = null
+      resolve(orientation)
+    }
+
+    image.onload = () => resolveOrientation(image.naturalHeight > image.naturalWidth ? 'portrait' : 'landscape')
+    image.onerror = () => resolveOrientation(null)
+    image.src = `${import.meta.env.BASE_URL}img/${card.url}`
+  })
 }
 
 export default function Deck({ cards }) {
@@ -25,17 +49,7 @@ export default function Deck({ cards }) {
     setAreCardsReady(false)
     setOrientations(cards.map(() => null))
 
-    Promise.all(
-      cards.map(
-        (card) =>
-          new Promise((resolve) => {
-            const image = new Image()
-            image.onload = () => resolve(image.naturalHeight > image.naturalWidth ? 'portrait' : 'landscape')
-            image.onerror = () => resolve(null)
-            image.src = `${import.meta.env.BASE_URL}img/${card.url}`
-          })
-      )
-    ).then((nextOrientations) => {
+    Promise.all(cards.map((card) => loadCardOrientation(card))).then((nextOrientations) => {
       if (isMounted) {
         setOrientations(nextOrientations)
         setAreCardsReady(true)
