@@ -8,12 +8,12 @@ _See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
 ## Getting Started
 
 1. `$ cd react-polaroid-photo-deck` - go inside the project directory
-2. `$ npm install` - install dependencies
+2. `$ npm ci` - install dependencies
 3. `$ npm start` - you will be navigated to [http://localhost:5173](http://localhost:5173) on your browser with hot reloading.
 
 ## Customization
 
-- Put your images in `public/img` folder and update the paths inside `photos.json` with orientation info: (portrait | landscape)
+- Put your images in the `public/img` folder and update the paths inside `src/photos.json`. Card orientation is detected automatically from each image.
 
 ## Build
 
