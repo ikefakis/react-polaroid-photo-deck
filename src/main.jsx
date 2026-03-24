@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
@@ -7,34 +7,53 @@ import * as utils from './utils'
 import './styles.css'
 import PHOTOS from './photos.json'
 
+const IMAGE_LOAD_TIMEOUT_MS = 5000
+
 function getCardOrientation(detectedOrientation) {
   return detectedOrientation ?? 'portrait'
+}
+
+function loadCardOrientation(card) {
+  return new Promise((resolve) => {
+    const image = new Image()
+    const timeoutId = window.setTimeout(() => {
+      image.onload = null
+      image.onerror = null
+      resolve(null)
+    }, IMAGE_LOAD_TIMEOUT_MS)
+
+    const resolveOrientation = (orientation) => {
+      window.clearTimeout(timeoutId)
+      image.onload = null
+      image.onerror = null
+      resolve(orientation)
+    }
+
+    image.onload = () => resolveOrientation(image.naturalHeight > image.naturalWidth ? 'portrait' : 'landscape')
+    image.onerror = () => resolveOrientation(null)
+    image.src = `${import.meta.env.BASE_URL}img/${card.url}`
+  })
 }
 
 export default function Deck({ cards }) {
   const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
   const [orientations, setOrientations] = useState(() => cards.map(() => null))
+  const [areCardsReady, setAreCardsReady] = useState(false)
   const [props, api] = useSprings(cards.length, (i) => ({
     ...utils.to(i),
     from: utils.from(i)
   })) // Create a bunch of springs using the helpers above
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let isMounted = true
+    setAreCardsReady(false)
     setOrientations(cards.map(() => null))
 
-    Promise.all(
-      cards.map(
-        (card) =>
-          new Promise((resolve) => {
-            const image = new Image()
-            image.onload = () => resolve(image.naturalHeight > image.naturalWidth ? 'portrait' : 'landscape')
-            image.onerror = () => resolve(null)
-            image.src = `${import.meta.env.BASE_URL}img/${card.url}`
-          })
-      )
-    ).then((nextOrientations) => {
-      if (isMounted) setOrientations(nextOrientations)
+    Promise.all(cards.map((card) => loadCardOrientation(card))).then((nextOrientations) => {
+      if (isMounted) {
+        setOrientations(nextOrientations)
+        setAreCardsReady(true)
+      }
     })
 
     return () => {
@@ -67,6 +86,8 @@ export default function Deck({ cards }) {
       }, 600)
   })
   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
+  if (!areCardsReady) return null
+
   return (
     <>
       {props.map(({ x, y, rot, scale }, i) => {
