@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
@@ -44,7 +44,7 @@ export default function Deck({ cards }) {
     from: utils.from(i)
   })) // Create a bunch of springs using the helpers above
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let isMounted = true
     setAreCardsReady(false)
     setOrientations(cards.map(() => null))
