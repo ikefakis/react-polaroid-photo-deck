@@ -46,20 +46,33 @@ export default function Deck({ cards }) {
 
   useLayoutEffect(() => {
     let isMounted = true
+    let animationFrameId
     setAreCardsReady(false)
     setOrientations(cards.map(() => null))
 
     Promise.all(cards.map((card) => loadCardOrientation(card))).then((nextOrientations) => {
       if (isMounted) {
         setOrientations(nextOrientations)
+        api.start((i) => ({
+          ...utils.from(i),
+          immediate: true
+        }))
         setAreCardsReady(true)
+        animationFrameId = window.requestAnimationFrame(() => {
+          if (isMounted) {
+            api.start((i) => utils.to(i))
+          }
+        })
       }
     })
 
     return () => {
       isMounted = false
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
     }
-  }, [cards])
+  }, [api, cards])
 
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
   const bind = useDrag(({ args: [index], active, movement: [mx], direction: [xDir], velocity: [vx] }) => {
