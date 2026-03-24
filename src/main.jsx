@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
@@ -7,12 +7,41 @@ import * as utils from './utils'
 import './styles.css'
 import PHOTOS from './photos.json'
 
+function getCardOrientation(detectedOrientation) {
+  return detectedOrientation ?? 'portrait'
+}
+
 export default function Deck({ cards }) {
   const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
+  const [orientations, setOrientations] = useState(() => cards.map(() => null))
   const [props, api] = useSprings(cards.length, (i) => ({
     ...utils.to(i),
     from: utils.from(i)
   })) // Create a bunch of springs using the helpers above
+
+  useEffect(() => {
+    let isMounted = true
+    setOrientations(cards.map(() => null))
+
+    Promise.all(
+      cards.map(
+        (card) =>
+          new Promise((resolve) => {
+            const image = new Image()
+            image.onload = () => resolve(image.naturalHeight > image.naturalWidth ? 'portrait' : 'landscape')
+            image.onerror = () => resolve(null)
+            image.src = `${import.meta.env.BASE_URL}img/${card.url}`
+          })
+      )
+    ).then((nextOrientations) => {
+      if (isMounted) setOrientations(nextOrientations)
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [cards])
+
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
   const bind = useDrag(({ args: [index], active, movement: [mx], direction: [xDir], velocity: [vx] }) => {
     const trigger = vx > 0.2 // If you flick hard enough it should trigger the card to fly out
@@ -40,20 +69,24 @@ export default function Deck({ cards }) {
   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
   return (
     <>
-      {props.map(({ x, y, rot, scale }, i) => (
-        <animated.div key={i} style={{ x, y }}>
-          {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
-          <animated.div
-            {...bind(i)}
-            style={{
-              transform: interpolate([rot, scale], utils.trans),
-              backgroundImage: `url(${import.meta.env.BASE_URL}img/${cards[i].url})`,
-              width: cards[i].orientation === 'portrait' ? '240px' : '320px',
-              height: cards[i].orientation === 'portrait' ? '320px' : '240px'
-            }}
-          />
-        </animated.div>
-      ))}
+      {props.map(({ x, y, rot, scale }, i) => {
+        const orientation = getCardOrientation(orientations[i])
+
+        return (
+          <animated.div key={i} style={{ x, y }}>
+            {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
+            <animated.div
+              {...bind(i)}
+              style={{
+                transform: interpolate([rot, scale], utils.trans),
+                backgroundImage: `url(${import.meta.env.BASE_URL}img/${cards[i].url})`,
+                width: orientation === 'portrait' ? '240px' : '320px',
+                height: orientation === 'portrait' ? '320px' : '240px'
+              }}
+            />
+          </animated.div>
+        )
+      })}
     </>
   )
 }

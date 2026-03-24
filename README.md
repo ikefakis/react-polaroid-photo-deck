@@ -13,7 +13,7 @@ _See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
 
 ## Customization
 
-- Put your images in `public/img` folder and update the paths inside `photos.json` with orientation info: (portrait | landscape)
+- Put your images in the `public/img` folder and update the paths inside `src/photos.json`. Card orientation is detected automatically from each image.
 
 ## Build
 
