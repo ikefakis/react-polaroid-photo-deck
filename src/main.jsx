@@ -14,6 +14,7 @@ function getCardOrientation(detectedOrientation) {
 export default function Deck({ cards }) {
   const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
   const [orientations, setOrientations] = useState(() => cards.map(() => null))
+  const [areCardsReady, setAreCardsReady] = useState(false)
   const [props, api] = useSprings(cards.length, (i) => ({
     ...utils.to(i),
     from: utils.from(i)
@@ -21,6 +22,7 @@ export default function Deck({ cards }) {
 
   useEffect(() => {
     let isMounted = true
+    setAreCardsReady(false)
     setOrientations(cards.map(() => null))
 
     Promise.all(
@@ -34,7 +36,10 @@ export default function Deck({ cards }) {
           })
       )
     ).then((nextOrientations) => {
-      if (isMounted) setOrientations(nextOrientations)
+      if (isMounted) {
+        setOrientations(nextOrientations)
+        setAreCardsReady(true)
+      }
     })
 
     return () => {
@@ -67,6 +72,8 @@ export default function Deck({ cards }) {
       }, 600)
   })
   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
+  if (!areCardsReady) return null
+
   return (
     <>
       {props.map(({ x, y, rot, scale }, i) => {
