@@ -4,10 +4,10 @@
   "description": "A beautiful polaroid style photo deck",
   "keywords": [],
   "homepage": "https://ikefakis.github.io/react-polaroid-photo-deck",
-  "main": "src/main.jsx",
+  "main": "src/main.tsx",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "tsc -b && vite build",
     "test": "node -e \"console.log('No tests configured')\""
   },
   "dependencies": {
@@ -18,7 +18,10 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",
-    "vite": "^8.0.1"
+    "vite": "^8.0.1",
+    "typescript": "^5.8.2",
+    "@types/react": "^18.3.21",
+    "@types/react-dom": "^18.3.6"
   },
   "browserslist": [
     ">0.2%",
