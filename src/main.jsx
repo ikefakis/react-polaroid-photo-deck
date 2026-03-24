@@ -7,13 +7,13 @@ import * as utils from './utils'
 import './styles.css'
 import PHOTOS from './photos.json'
 
-function getCardOrientation(card, detectedOrientation) {
-  return detectedOrientation ?? card.orientation ?? 'portrait'
+function getCardOrientation(detectedOrientation) {
+  return detectedOrientation ?? 'portrait'
 }
 
 export default function Deck({ cards }) {
   const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
-  const [orientations, setOrientations] = useState(() => cards.map((card) => card.orientation ?? null))
+  const [orientations, setOrientations] = useState(() => cards.map(() => null))
   const [props, api] = useSprings(cards.length, (i) => ({
     ...utils.to(i),
     from: utils.from(i)
@@ -21,14 +21,15 @@ export default function Deck({ cards }) {
 
   useEffect(() => {
     let isMounted = true
+    setOrientations(cards.map(() => null))
 
     Promise.all(
       cards.map(
         (card) =>
           new Promise((resolve) => {
             const image = new Image()
-            image.onload = () => resolve(image.naturalHeight >= image.naturalWidth ? 'portrait' : 'landscape')
-            image.onerror = () => resolve(card.orientation ?? 'portrait')
+            image.onload = () => resolve(image.naturalHeight > image.naturalWidth ? 'portrait' : 'landscape')
+            image.onerror = () => resolve(null)
             image.src = `${import.meta.env.BASE_URL}img/${card.url}`
           })
       )
@@ -69,7 +70,7 @@ export default function Deck({ cards }) {
   return (
     <>
       {props.map(({ x, y, rot, scale }, i) => {
-        const orientation = getCardOrientation(cards[i], orientations[i])
+        const orientation = getCardOrientation(orientations[i])
 
         return (
           <animated.div key={i} style={{ x, y }}>
