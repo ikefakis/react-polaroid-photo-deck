@@ -8,7 +8,7 @@ _See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
 ## Getting Started
 
 1. `$ cd react-polaroid-photo-deck` - go inside the project directory
-2. `$ npm ci` - install dependencies
+2. `$ npm install` - install dependencies
 3. `$ npm start` - you will be navigated to [http://localhost:5173](http://localhost:5173) on your browser with hot reloading.
 
 ## Customization
