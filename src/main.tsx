@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
@@ -7,13 +7,31 @@ import * as utils from './utils'
 import './styles.css'
 import PHOTOS from './photos.json'
 
+type Card = {
+  url: string
+}
+
+type Orientation = 'portrait' | 'landscape'
+
+type DeckProps = {
+  cards: Card[]
+}
+
+type DragGestureState = {
+  args?: [number]
+  active: boolean
+  movement: [number, number]
+  direction: [number, number]
+  velocity: [number, number]
+}
+
 const IMAGE_LOAD_TIMEOUT_MS = 5000
 
-function getCardOrientation(detectedOrientation) {
+function getCardOrientation(detectedOrientation: Orientation | null): Orientation {
   return detectedOrientation ?? 'portrait'
 }
 
-function loadCardOrientation(card) {
+function loadCardOrientation(card: Card): Promise<Orientation | null> {
   return new Promise((resolve) => {
     const image = new Image()
     const timeoutId = window.setTimeout(() => {
@@ -22,7 +40,7 @@ function loadCardOrientation(card) {
       resolve(null)
     }, IMAGE_LOAD_TIMEOUT_MS)
 
-    const resolveOrientation = (orientation) => {
+    const resolveOrientation = (orientation: Orientation | null) => {
       window.clearTimeout(timeoutId)
       image.onload = null
       image.onerror = null
@@ -35,18 +53,18 @@ function loadCardOrientation(card) {
   })
 }
 
-export default function Deck({ cards }) {
-  const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
-  const [orientations, setOrientations] = useState(() => cards.map(() => null))
+export default function Deck({ cards }: DeckProps) {
+  const [gone] = useState(() => new Set<number>())
+  const [orientations, setOrientations] = useState<(Orientation | null)[]>(() => cards.map(() => null))
   const [areCardsReady, setAreCardsReady] = useState(false)
   const [props, api] = useSprings(cards.length, (i) => ({
     ...utils.to(i),
     from: utils.from(i)
-  })) // Create a bunch of springs using the helpers above
+  }))
 
   useLayoutEffect(() => {
     let isMounted = true
-    let animationFrameId
+    let animationFrameId: number | undefined
     setAreCardsReady(false)
     setOrientations(cards.map(() => null))
 
@@ -74,16 +92,18 @@ export default function Deck({ cards }) {
     }
   }, [api, cards])
 
-  // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
-  const bind = useDrag(({ args: [index], active, movement: [mx], direction: [xDir], velocity: [vx] }) => {
-    const trigger = vx > 0.2 // If you flick hard enough it should trigger the card to fly out
-    if (!active && trigger) gone.add(index) // If button/finger's up and trigger velocity is reached, we flag the card ready to fly out
+  const bind = useDrag(({ args, active, movement: [mx], direction: [xDir], velocity: [vx] }: DragGestureState) => {
+    const [index] = args ?? []
+    if (typeof index !== 'number') return
+
+    const trigger = vx > 0.2
+    if (!active && trigger) gone.add(index)
     api.start((i) => {
-      if (index !== i) return // We're only interested in changing spring-data for the current spring
+      if (index !== i) return
       const isGone = gone.has(index)
-      const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0 // When a card is gone it flys out left or right, otherwise goes back to zero
-      const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0) // How much the card tilts, flicking it harder makes it rotate faster
-      const scale = active ? 1.1 : 1 // Active cards lift up a bit
+      const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0
+      const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0)
+      const scale = active ? 1.1 : 1
       return {
         x,
         rot,
@@ -92,13 +112,14 @@ export default function Deck({ cards }) {
         config: { friction: 50, tension: active ? 800 : isGone ? 200 : 500 }
       }
     })
-    if (!active && gone.size === cards.length)
-      setTimeout(() => {
+    if (!active && gone.size === cards.length) {
+      window.setTimeout(() => {
         gone.clear()
         api.start((i) => utils.to(i))
       }, 600)
+    }
   })
-  // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
+
   if (!areCardsReady) return null
 
   return (
@@ -108,7 +129,6 @@ export default function Deck({ cards }) {
 
         return (
           <animated.div key={i} style={{ x, y }}>
-            {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
             <animated.div
               {...bind(i)}
               style={{
@@ -126,5 +146,9 @@ export default function Deck({ cards }) {
 }
 
 const rootElement = document.getElementById('photo-deck')
-const root = createRoot(rootElement)
-root.render(<Deck cards={PHOTOS} />)
+
+if (!rootElement) {
+  throw new Error('Photo deck root element not found')
+}
+
+createRoot(rootElement).render(<Deck cards={PHOTOS} />)
