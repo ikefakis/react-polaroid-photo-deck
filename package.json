@@ -21,19 +21,19 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --noEmit && vite build",
-    "build:lib": "tsc -p tsconfig.lib.json && vite build --mode lib",
+    "build:lib": "vite build --mode lib && tsc -p tsconfig.lib.json",
     "prepublishOnly": "npm run build:lib",
     "test": "node -e \"console.log('No tests configured')\""
   },
   "peerDependencies": {
+    "@react-spring/web": "^9.4.5",
+    "@use-gesture/react": "^10.3.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
   },
-  "dependencies": {
-    "@react-spring/web": "^9.4.5",
-    "@use-gesture/react": "^10.3.1"
-  },
   "devDependencies": {
+    "@react-spring/web": "^9.4.5",
+    "@use-gesture/react": "^10.3.1",
     "@vitejs/plugin-react": "^6.0.1",
     "vite": "^8.0.1",
     "typescript": "^5.8.2",

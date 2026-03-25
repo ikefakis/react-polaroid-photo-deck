@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, type CSSProperties } from 'react'
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
 
@@ -55,6 +55,7 @@ function loadCardOrientation(card: Card): Promise<Orientation | null> {
 
 export default function Deck({ cards, className, style }: DeckProps) {
   const [gone] = useState(() => new Set<number>())
+  const deckRef = useRef<HTMLDivElement>(null)
   const [orientations, setOrientations] = useState<(Orientation | null)[]>(() => cards.map(() => null))
   const [areCardsReady, setAreCardsReady] = useState(false)
   const [props, api] = useSprings(cards.length, (i) => ({
@@ -65,6 +66,7 @@ export default function Deck({ cards, className, style }: DeckProps) {
   useLayoutEffect(() => {
     let isMounted = true
     let animationFrameId: number | undefined
+    gone.clear()
     setAreCardsReady(false)
     setOrientations(cards.map(() => null))
 
@@ -101,7 +103,8 @@ export default function Deck({ cards, className, style }: DeckProps) {
     api.start((i) => {
       if (index !== i) return
       const isGone = gone.has(index)
-      const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0
+      const deckWidth = deckRef.current?.getBoundingClientRect().width ?? window.innerWidth
+      const x = isGone ? (200 + deckWidth) * xDir : active ? mx : 0
       const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0)
       const scale = active ? 1.1 : 1
       return {
@@ -123,7 +126,7 @@ export default function Deck({ cards, className, style }: DeckProps) {
   const deckClassName = className ? `photo-deck ${className}` : 'photo-deck'
 
   return (
-    <div className={deckClassName} style={style}>
+    <div ref={deckRef} className={deckClassName} style={style}>
       {areCardsReady &&
         props.map(({ x, y, rot, scale }, i) => {
           const orientation = getCardOrientation(orientations[i])
