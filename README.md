@@ -41,3 +41,10 @@ export function Example() {
 ## Deploy
 
 - Push to `main` to trigger the GitHub Actions workflow that builds the app and deploys `dist` to GitHub Pages.
+
+## Publish from GitHub
+
+- Add an `NPM_TOKEN` repository secret with publish access to the npm package.
+- Run the `Publish package` workflow from the `main` branch.
+- Provide the `version` input as either an npm release keyword (`patch`, `minor`, `major`, `prerelease`) or an exact semver.
+- The workflow installs dependencies, validates both `npm run build` and `npm run build:lib`, then bumps the version, publishes to npm, commits the updated `package.json`/`package-lock.json`, and pushes a matching `v*` git tag.
