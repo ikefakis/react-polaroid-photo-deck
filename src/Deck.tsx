@@ -120,7 +120,7 @@ export default function Deck({ cards, className, style }: DeckProps) {
     }
   })
 
-  const deckClassName = ['photo-deck', className].filter(Boolean).join(' ')
+  const deckClassName = className ? `photo-deck ${className}` : 'photo-deck'
 
   return (
     <div className={deckClassName} style={style}>

@@ -5,7 +5,7 @@ export default defineConfig(({ command, mode }) => {
   const isLibraryBuild = mode === 'lib'
 
   return {
-    base: !isLibraryBuild && command === 'build' ? '/react-polaroid-photo-deck/' : '/',
+    base: isLibraryBuild || command !== 'build' ? '/' : '/react-polaroid-photo-deck/',
     plugins: [react()],
     build: isLibraryBuild
       ? {
