@@ -1,6 +1,6 @@
 # Polaroid style photo deck
 
-![alt text](https://github.com/ikefakis/react-polaroid-photo-deck/raw/master/docs/repository-image.png "Polaroid style photo deck")
+![alt text](https://github.com/ikefakis/react-polaroid-photo-deck/raw/main/docs/repository-image.png "Polaroid style photo deck")
 
 A beautiful polaroid style photo deck.
 _See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
