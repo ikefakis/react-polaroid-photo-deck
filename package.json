@@ -2,7 +2,7 @@
   "name": "@ikefakis/react-polaroid-photo-deck",
   "version": "2.0.0",
   "description": "A beautiful polaroid style photo deck",
-  "keywords": ["react", "polaroid", "gallery", "photos"]
+  "keywords": ["react", "polaroid", "gallery", "photos"],
   "homepage": "https://ikefakis.github.io/react-polaroid-photo-deck",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
