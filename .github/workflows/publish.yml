@@ -29,12 +29,12 @@ jobs:
           exit 1
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
@@ -44,32 +44,21 @@ jobs:
         run: npm ci
 
       - name: Validate builds
-        run: |
-          npm run build
-          npm run build:lib
+        run: npm run build
 
       - name: Configure Git
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-      - name: Publish to npm
+      - name: Version, publish, and push release
         run: |
-          restore_version() {
-            git checkout -- package.json package-lock.json
-          }
-
-          trap restore_version ERR
-          npm version "${{ inputs.version }}" --no-git-tag-version
-          npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Commit version bump
-        run: |
-          VERSION="v$(node -p "require('./package.json').version")"
+          VERSION="$(npm version "${{ inputs.version }}" --no-git-tag-version)"
           git add package.json package-lock.json
           git commit -m "chore(release): ${VERSION}"
           git tag "${VERSION}"
+          npm publish --access public --provenance
           git push origin HEAD:main
           git push origin "${VERSION}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
