@@ -4,6 +4,10 @@
   "description": "A beautiful polaroid style photo deck",
   "keywords": ["react", "polaroid", "gallery", "photos"],
   "homepage": "https://ikefakis.github.io/react-polaroid-photo-deck",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikefakis/react-polaroid-photo-deck.git"
+  },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
