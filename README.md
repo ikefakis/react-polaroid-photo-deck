@@ -29,7 +29,9 @@ export function Example() {
 }
 ```
 
+- Install with `npm install @ikefakis/react-polaroid-photo-deck react react-dom`.
 - The reusable component accepts final image URLs through the `cards` prop.
+- `react` and `react-dom` are the only peer dependencies. Animation and gesture packages are bundled as library dependencies.
 - The demo app still maps `src/photos.json` entries to the correct GitHub Pages asset path.
 - Run `npm run build:lib` to create the publishable package in `dist`. This command bundles first and then emits `.d.ts` files so the generated type declarations are not removed by Vite's library build output step.
 
