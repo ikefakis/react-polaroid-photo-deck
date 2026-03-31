@@ -27,6 +27,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  touch-action: none;
   will-change: transform;
   border: 1em solid #fff;
   border-bottom: 4em solid #fff;
