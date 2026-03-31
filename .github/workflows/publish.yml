@@ -38,7 +38,19 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          always-auth: true
           registry-url: https://registry.npmjs.org
+
+      - name: Validate npm publish token
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error title=Missing NPM_TOKEN secret::Set the NPM_TOKEN repository secret to an npm automation or granular publish token with access to @ikefakis/react-polaroid-photo-deck."
+            exit 1
+          fi
+
+          npm whoami
 
       - name: Install dependencies
         run: npm ci
@@ -53,11 +65,18 @@ jobs:
 
       - name: Version, publish, and push release
         run: |
+          PACKAGE_NAME="$(node -p "require('./package.json').name")"
           VERSION="$(npm version "${{ inputs.version }}" --no-git-tag-version)"
+
+          if npm view "${PACKAGE_NAME}@${VERSION}" version >/dev/null 2>&1; then
+            echo "::error title=Version already published::${PACKAGE_NAME} ${VERSION} already exists on npm. Choose a different version input and rerun the workflow."
+            exit 1
+          fi
+
+          npm publish --access public --provenance
           git add package.json package-lock.json
           git commit -m "chore(release): ${VERSION}"
           git tag "${VERSION}"
-          npm publish --access public --provenance
           git push origin HEAD:main
           git push origin "${VERSION}"
         env:
