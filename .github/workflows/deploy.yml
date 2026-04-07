@@ -35,7 +35,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Build
-        run: npm run build
+        run: npm run build:playground
 
       - name: Package Pages artifact
         run: |

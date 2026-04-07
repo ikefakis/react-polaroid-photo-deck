@@ -1,53 +1,92 @@
-# Polaroid style photo deck
+# React Polaroid Photo Deck
 
-![alt text](https://github.com/ikefakis/react-polaroid-photo-deck/raw/main/docs/repository-image.png "Polaroid style photo deck")
+![React Polaroid Photo Deck](https://github.com/ikefakis/react-polaroid-photo-deck/raw/main/docs/repository-image.png)
 
-A beautiful polaroid style photo deck.
-_See [demo](https://ikefakis.github.io/react-polaroid-photo-deck)_
+A publishable React component that renders an interactive polaroid-style photo deck with drag gestures and spring animations.
 
-## Getting Started
+Demo: [ikefakis.github.io/react-polaroid-photo-deck](https://ikefakis.github.io/react-polaroid-photo-deck)
 
-1. `$ cd react-polaroid-photo-deck` - go inside the project directory
-2. `$ npm install` - install dependencies
-3. `$ npm start` - you will be navigated to [http://localhost:5173](http://localhost:5173) on your browser with hot reloading.
+## Install
 
-## Customization
+```bash
+npm install @ikefakis/react-polaroid-photo-deck react react-dom
+```
 
-- Put your images in the `public/img` folder and update the paths inside `src/photos.json`. Card orientation is detected automatically from each image.
+The package keeps `react` and `react-dom` as peer dependencies. Gesture and spring dependencies are bundled as regular package dependencies so consumers do not need to install them separately.
 
-## Package usage
+## Usage
 
-This repository can also be published as the `react-polaroid-photo-deck` package.
+```tsx
+import { Deck } from '@ikefakis/react-polaroid-photo-deck'
+import '@ikefakis/react-polaroid-photo-deck/style.css'
 
-```jsx
-import { Deck } from 'react-polaroid-photo-deck'
-
-const cards = [{ url: '/img/01.jpg' }, { url: '/img/02.jpg' }]
+const cards = [{ url: '/img/01.jpg' }, { url: '/img/02.jpg' }, { url: '/img/03.jpg' }]
 
 export function Example() {
   return <Deck cards={cards} style={{ width: '100vw', height: '100vh' }} />
 }
 ```
 
-- Install with `npm install @ikefakis/react-polaroid-photo-deck react react-dom`.
-- The reusable component accepts final image URLs through the `cards` prop.
-- `react` and `react-dom` are the only peer dependencies. Animation and gesture packages are bundled as library dependencies.
-- The demo app still maps `src/photos.json` entries to the correct GitHub Pages asset path.
-- Run `npm run build:lib` to create the publishable package in `dist`. This command bundles first and then emits `.d.ts` files so the generated type declarations are not removed by Vite's library build output step.
+Each card only needs a final image URL. Orientation is detected automatically when images load.
+
+## API
+
+```ts
+type Card = {
+  url: string
+}
+
+type DeckProps = {
+  cards: Card[]
+  className?: string
+  style?: React.CSSProperties
+}
+```
+
+## Repository Structure
+
+- `src/`: publishable library source and package entrypoint.
+- `playground/`: local demo app and GitHub Pages entrypoint.
+- `public/img/`: sample images used by the playground.
+
+## Development
+
+```bash
+npm ci
+npm run dev
+```
+
+That starts the secondary playground app on the local Vite server.
+
+Playground image data lives in `playground/photos.json`. Sample image files live in `public/img`.
 
 ## Build
 
-- `$ npm run build` - An optimized production build will be generated in `dist` folder.
-- `$ npm run build:lib` - A publishable library build with type declarations will be generated in `dist` folder.
+```bash
+npm run build
+```
+
+Builds the publishable library into `dist`.
+
+```bash
+npm run build:playground
+```
+
+Builds the GitHub Pages playground into `dist`.
+
+## Publish
+
+`npm run prepublishOnly` and the `Publish package` workflow both validate the library build before publishing.
+
+The publish workflow:
+
+1. Installs dependencies with `npm ci`.
+2. Validates the package with `npm run build`.
+3. Bumps the version.
+4. Prepends generated release notes to `CHANGELOG.md`.
+5. Publishes the package to npm.
+6. Pushes the release commit and matching `v*` tag.
 
 ## Deploy
 
-- Push to `main` to trigger the GitHub Actions workflow that builds the app and deploys `dist` to GitHub Pages.
-
-## Publish from GitHub
-
-- Add an `NPM_TOKEN` repository secret with publish access to the npm package.
-- Run the `Publish package` workflow from the `main` branch.
-- Provide the `version` input as either an npm release keyword (`patch`, `minor`, `major`, `prerelease`) or an exact semver.
-- The workflow installs dependencies, validates `npm run build`, then bumps the version, collects commit subjects since the previous `v*` tag, prepends them to `CHANGELOG.md`, publishes to npm, and pushes the updated release commit plus the matching `v*` git tag.
-- The same generated notes are used for the release commit body and the GitHub release so each published package includes the changes introduced since the previous version.
+The GitHub Pages workflow runs `npm run build:playground` and deploys the generated `dist` directory.

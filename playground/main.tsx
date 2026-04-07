@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import Deck from './Deck'
+import { Deck } from '../src'
 import './demo.css'
 import PHOTOS from './photos.json'
 

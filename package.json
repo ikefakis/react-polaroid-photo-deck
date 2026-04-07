@@ -28,10 +28,13 @@
     "dist"
   ],
   "scripts": {
-    "start": "vite",
-    "build": "tsc --noEmit && vite build",
+    "dev": "vite",
+    "start": "npm run dev",
+    "build": "tsc --noEmit && npm run build:lib",
     "build:lib": "vite build --mode lib && tsc -p tsconfig.lib.json",
-    "prepublishOnly": "npm run build:lib",
+    "build:playground": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build",
     "test": "node -e \"console.log('No tests configured')\""
   },
   "dependencies": {
