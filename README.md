@@ -20,7 +20,11 @@ The package keeps `react` and `react-dom` as peer dependencies. Gesture and spri
 import { Deck } from '@ikefakis/react-polaroid-photo-deck'
 import '@ikefakis/react-polaroid-photo-deck/style.css'
 
-const cards = [{ url: '/img/01.jpg' }, { url: '/img/02.jpg' }, { url: '/img/03.jpg' }]
+const cards = [
+  { url: 'https://picsum.photos/id/1025/800/1100' },
+  { url: 'https://picsum.photos/id/1011/1200/800' },
+  { url: 'https://picsum.photos/id/1003/820/1180' }
+]
 
 export function Example() {
   return <Deck cards={cards} style={{ width: '100vw', height: '100vh' }} />
@@ -47,7 +51,6 @@ type DeckProps = {
 
 - `src/`: publishable library source and package entrypoint.
 - `playground/`: local demo app and GitHub Pages entrypoint.
-- `public/img/`: sample images used by the playground.
 
 ## Development
 
@@ -57,8 +60,6 @@ npm run dev
 ```
 
 That starts the secondary playground app on the local Vite server.
-
-Playground image data lives in `playground/photos.json`. Sample image files live in `public/img`.
 
 ## Build
 
