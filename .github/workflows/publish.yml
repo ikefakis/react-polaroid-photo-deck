@@ -52,18 +52,73 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Version, publish, and push release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          PACKAGE_NAME="$(node -p "require('./package.json').name")"
-          VERSION="$(npm version "${{ inputs.version }}" --no-git-tag-version)"
+          cleanup() {
+            rm -f release-notes.md commit-message.txt CHANGELOG.md.new
+          }
 
-          if npm view "${PACKAGE_NAME}@${VERSION}" version >/dev/null 2>&1; then
-            echo "::error title=Version already published::${PACKAGE_NAME} ${VERSION} already exists on npm. Choose a different version input and rerun the workflow."
+          trap cleanup EXIT
+
+          PACKAGE_NAME="$(node -p "require('./package.json').name")"
+          PREVIOUS_TAG="$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || true)"
+          VERSION="$(npm version "${{ inputs.version }}" --no-git-tag-version)"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+
+          if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version >/dev/null 2>&1; then
+            echo "::error title=Version already published::${PACKAGE_NAME} ${PACKAGE_VERSION} already exists on npm. Choose a different version input and rerun the workflow."
             exit 1
           fi
 
+          if [ -n "${PREVIOUS_TAG}" ]; then
+            RELEASE_RANGE="${PREVIOUS_TAG}..HEAD"
+          else
+            RELEASE_RANGE="HEAD"
+          fi
+
+          CHANGE_LINES="$(git log ${RELEASE_RANGE} --no-merges --pretty=format:'- %s (%h)' --reverse | grep -v '^- chore(release):' || true)"
+
+          if [ -z "${CHANGE_LINES}" ]; then
+            CHANGE_LINES='- No user-facing changes recorded.'
+          fi
+
+          {
+            printf '## %s - %s\n\n' "${VERSION}" "$(date -u +%Y-%m-%d)"
+
+            if [ -n "${PREVIOUS_TAG}" ]; then
+              printf 'Changes since %s.\n\n' "${PREVIOUS_TAG}"
+            fi
+
+            printf '%s\n' "${CHANGE_LINES}"
+          } > release-notes.md
+
+          if [ -f CHANGELOG.md ]; then
+            {
+              printf '# Changelog\n\n'
+              cat release-notes.md
+              printf '\n'
+              awk 'NR == 1 && $0 == "# Changelog" { next } NR == 2 && $0 == "" { next } { print }' CHANGELOG.md
+            } > CHANGELOG.md.new
+          else
+            {
+              printf '# Changelog\n\n'
+              cat release-notes.md
+              printf '\n'
+            } > CHANGELOG.md.new
+          fi
+
+          mv CHANGELOG.md.new CHANGELOG.md
+
+          {
+            printf 'chore(release): %s\n\n' "${VERSION}"
+            cat release-notes.md
+          } > commit-message.txt
+
           npm publish --access public --provenance
-          git add package.json package-lock.json
-          git commit -m "chore(release): ${VERSION}"
-          git tag "${VERSION}"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -F commit-message.txt
+          git tag -a "${VERSION}" -F release-notes.md
           git push origin HEAD:main
           git push origin "${VERSION}"
+          gh release create "${VERSION}" --title "${VERSION}" --notes-file release-notes.md

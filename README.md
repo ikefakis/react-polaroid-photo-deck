@@ -49,4 +49,5 @@ export function Example() {
 - Add an `NPM_TOKEN` repository secret with publish access to the npm package.
 - Run the `Publish package` workflow from the `main` branch.
 - Provide the `version` input as either an npm release keyword (`patch`, `minor`, `major`, `prerelease`) or an exact semver.
-- The workflow installs dependencies, validates `npm run build`, then bumps the version, commits and tags the release, publishes to npm, and pushes the updated `package.json`/`package-lock.json` plus the matching `v*` git tag.
+- The workflow installs dependencies, validates `npm run build`, then bumps the version, collects commit subjects since the previous `v*` tag, prepends them to `CHANGELOG.md`, publishes to npm, and pushes the updated release commit plus the matching `v*` git tag.
+- The same generated notes are used for the release commit body and the GitHub release so each published package includes the changes introduced since the previous version.
