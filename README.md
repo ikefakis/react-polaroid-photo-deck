@@ -20,10 +20,22 @@ The package keeps `react` and `react-dom` as peer dependencies. Gesture and spri
 import { Deck } from "@ikefakis/react-polaroid-photo-deck";
 import "@ikefakis/react-polaroid-photo-deck/style.css";
 
-const cards = [
-  { url: "https://picsum.photos/id/1025/800/1100" },
-  { url: "https://picsum.photos/id/1011/1200/800" },
-  { url: "https://picsum.photos/id/1003/820/1180" },
+const photos = [
+  {
+    url: "https://picsum.photos/id/1036/800/1100",
+    date: "15/01/2025",
+    caption: "Quiet morning mist",
+  },
+  {
+    url: "https://picsum.photos/id/1011/1200/800",
+    date: "22/07/2024",
+    caption: "Drifting in silence",
+  },
+  {
+    url: "https://picsum.photos/id/1003/820/1180",
+    date: "05/05/2024",
+    caption: "Stumbled upon magic",
+  },
 ];
 
 export function Example() {
@@ -31,13 +43,17 @@ export function Example() {
 }
 ```
 
-Each card only needs a final image URL. Orientation is detected automatically when images load.
+Each card only needs a final image URL. You can also provide an optional
+display-ready `date` string and a `caption` string for handwritten metadata.
+Orientation is detected automatically when images load.
 
 ## API
 
 ```ts
 type Card = {
   url: string;
+  date?: string;
+  caption?: string;
 };
 
 type DeckProps = {
@@ -45,6 +61,16 @@ type DeckProps = {
   className?: string;
   style?: React.CSSProperties;
 };
+```
+
+The bundled stylesheet imports the `Mynerve` font from Google Fonts for the
+handwritten metadata. Consumers can override it with:
+
+```css
+.your-deck {
+  --photo-deck-font: "Your Custom Font";
+  --photo-deck-caption-font-size: 1.5rem;
+}
 ```
 
 ## Repository Structure

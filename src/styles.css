@@ -1,4 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Mynerve&display=swap");
+
 .photo-deck {
+  --photo-deck-font: "Mynerve";
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
@@ -9,7 +12,7 @@
 .photo-deck *,
 .photo-deck *::before,
 .photo-deck *::after {
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 .photo-deck__card-shell {
@@ -23,16 +26,75 @@
 }
 
 .photo-deck__card {
+  display: grid;
+  grid-template-rows:
+    var(--photo-deck-card-top-height)
+    var(--photo-deck-photo-height)
+    var(--photo-deck-card-bottom-height);
+  justify-items: center;
+  align-items: stretch;
   background-color: #fff;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
   touch-action: none;
   will-change: transform;
-  border: 1em solid #fff;
-  border-bottom: 4em solid #fff;
   border-radius: 3px;
   box-shadow:
     0 12.5px 100px -10px rgba(50, 50, 73, 0.4),
     0 10px 10px -10px rgba(50, 50, 73, 0.3);
+}
+
+.photo-deck__photo {
+  width: var(--photo-deck-photo-width);
+  height: var(--photo-deck-photo-height);
+  background-color: #f4f2ee;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  box-shadow: inset 0 0 0 1px rgba(50, 50, 73, 0.12);
+}
+
+.photo-deck__date-row,
+.photo-deck__caption-row {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.photo-deck__date-row {
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 8px 16px 0;
+}
+
+.photo-deck__caption-row {
+  align-items: center;
+  justify-content: center;
+  padding: 4px 22px 14px;
+}
+
+.photo-deck__date,
+.photo-deck__caption {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  color: #121212;
+  font-family:
+    var(--photo-deck-font), "Segoe Print", "Bradley Hand", "Chalkboard SE",
+    "Comic Sans MS", cursive;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: rotate(-2deg);
+}
+
+.photo-deck__date {
+  font-size: 1rem;
+  text-align: right;
+}
+
+.photo-deck__caption {
+  font-size: var(--photo-deck-caption-font-size, 1.5rem);
+  text-align: center;
 }

@@ -7,9 +7,20 @@ import "./styles.css";
 
 export type Card = {
   url: string;
+  date?: string;
+  caption?: string;
 };
 
 type Orientation = "portrait" | "landscape";
+
+type CardDimensions = {
+  frameWidth: number;
+  frameHeight: number;
+  photoWidth: number;
+  photoHeight: number;
+  topHeight: number;
+  bottomHeight: number;
+};
 
 export type DeckProps = {
   cards: Card[];
@@ -26,11 +37,59 @@ type DragGestureState = {
 };
 
 const IMAGE_LOAD_TIMEOUT_MS = 5000;
+const CARD_SAFE_MARGIN_PX = 48;
+const CARD_DIMENSIONS: Record<Orientation, CardDimensions> = {
+  portrait: {
+    frameWidth: 272,
+    frameHeight: 428,
+    photoWidth: 240,
+    photoHeight: 320,
+    topHeight: 32,
+    bottomHeight: 76,
+  },
+  landscape: {
+    frameWidth: 352,
+    frameHeight: 344,
+    photoWidth: 320,
+    photoHeight: 240,
+    topHeight: 32,
+    bottomHeight: 72,
+  },
+};
 
 function getCardOrientation(
   detectedOrientation: Orientation | null,
 ): Orientation {
   return detectedOrientation ?? "portrait";
+}
+
+function getCardDimensions(orientation: Orientation): CardDimensions {
+  return CARD_DIMENSIONS[orientation];
+}
+
+function getFittedCardDimensions(
+  dimensions: CardDimensions,
+  deckWidth: number,
+  deckHeight: number,
+): CardDimensions {
+  const widthScale =
+    deckWidth > 0
+      ? (deckWidth - CARD_SAFE_MARGIN_PX) / dimensions.frameWidth
+      : 1;
+  const heightScale =
+    deckHeight > 0
+      ? (deckHeight - CARD_SAFE_MARGIN_PX) / dimensions.frameHeight
+      : 1;
+  const scale = Math.min(1, widthScale, heightScale);
+
+  return {
+    frameWidth: dimensions.frameWidth * scale,
+    frameHeight: dimensions.frameHeight * scale,
+    photoWidth: dimensions.photoWidth * scale,
+    photoHeight: dimensions.photoHeight * scale,
+    topHeight: dimensions.topHeight * scale,
+    bottomHeight: dimensions.bottomHeight * scale,
+  };
 }
 
 function loadCardOrientation(card: Card): Promise<Orientation | null> {
@@ -61,6 +120,12 @@ function loadCardOrientation(card: Card): Promise<Orientation | null> {
 export default function Deck({ cards, className, style }: DeckProps) {
   const [gone] = useState(() => new Set<number>());
   const deckRef = useRef<HTMLDivElement>(null);
+  const [deckSize, setDeckSize] = useState(() => ({
+    width:
+      typeof window === "undefined" ? 0 : Math.max(window.innerWidth, 0),
+    height:
+      typeof window === "undefined" ? 0 : Math.max(window.innerHeight, 0),
+  }));
   const [orientations, setOrientations] = useState<(Orientation | null)[]>(() =>
     cards.map(() => null),
   );
@@ -69,6 +134,32 @@ export default function Deck({ cards, className, style }: DeckProps) {
     ...utils.to(i),
     from: utils.from(i),
   }));
+
+  useLayoutEffect(() => {
+    const deckElement = deckRef.current;
+
+    if (!deckElement) return;
+
+    const updateDeckSize = () => {
+      const { width, height } = deckElement.getBoundingClientRect();
+      setDeckSize({
+        width,
+        height,
+      });
+    };
+
+    updateDeckSize();
+
+    const observer = new ResizeObserver(() => {
+      updateDeckSize();
+    });
+
+    observer.observe(deckElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useLayoutEffect(() => {
     let isMounted = true;
@@ -148,6 +239,18 @@ export default function Deck({ cards, className, style }: DeckProps) {
       {areCardsReady &&
         props.map(({ x, y, rot, scale }, i) => {
           const orientation = getCardOrientation(orientations[i]);
+          const dimensions = getFittedCardDimensions(
+            getCardDimensions(orientation),
+            deckSize.width,
+            deckSize.height,
+          );
+          const card = cards[i];
+          const cardVariables = {
+            "--photo-deck-photo-width": `${dimensions.photoWidth}px`,
+            "--photo-deck-photo-height": `${dimensions.photoHeight}px`,
+            "--photo-deck-card-top-height": `${dimensions.topHeight}px`,
+            "--photo-deck-card-bottom-height": `${dimensions.bottomHeight}px`,
+          } as CSSProperties;
 
           return (
             <animated.div
@@ -157,14 +260,31 @@ export default function Deck({ cards, className, style }: DeckProps) {
             >
               <animated.div
                 {...bind(i)}
-                className="photo-deck__card"
+                className={`photo-deck__card photo-deck__card--${orientation}`}
                 style={{
                   transform: interpolate([rot, scale], utils.trans),
-                  backgroundImage: `url(${cards[i].url})`,
-                  width: orientation === "portrait" ? "240px" : "320px",
-                  height: orientation === "portrait" ? "320px" : "240px",
+                  width: `${dimensions.frameWidth}px`,
+                  height: `${dimensions.frameHeight}px`,
+                  ...cardVariables,
                 }}
-              />
+              >
+                <div className="photo-deck__date-row">
+                  {card.date ? (
+                    <span className="photo-deck__date">{card.date}</span>
+                  ) : null}
+                </div>
+                <div
+                  className="photo-deck__photo"
+                  style={{
+                    backgroundImage: `url(${card.url})`,
+                  }}
+                />
+                <div className="photo-deck__caption-row">
+                  {card.caption ? (
+                    <span className="photo-deck__caption">{card.caption}</span>
+                  ) : null}
+                </div>
+              </animated.div>
             </animated.div>
           );
         })}
