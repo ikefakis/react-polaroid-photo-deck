@@ -1,6 +1,6 @@
 # React Polaroid Photo Deck
 
-![React Polaroid Photo Deck](https://github.com/ikefakis/react-polaroid-photo-deck/raw/main/docs/repository-image.png)
+![React Polaroid Photo Deck](https://github.com/ikefakis/react-polaroid-photo-deck/raw/main/docs/repository-image.webp)
 
 A publishable React component that renders an interactive polaroid-style photo deck with drag gestures and spring animations.
 
