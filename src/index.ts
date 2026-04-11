@@ -1,2 +1,2 @@
-export { default as Deck } from './Deck'
-export type { Card, DeckProps } from './Deck'
+export { default as Deck } from "./Deck";
+export type { Card, DeckProps } from "./Deck";

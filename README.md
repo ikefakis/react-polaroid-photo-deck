@@ -17,17 +17,17 @@ The package keeps `react` and `react-dom` as peer dependencies. Gesture and spri
 ## Usage
 
 ```tsx
-import { Deck } from '@ikefakis/react-polaroid-photo-deck'
-import '@ikefakis/react-polaroid-photo-deck/style.css'
+import { Deck } from "@ikefakis/react-polaroid-photo-deck";
+import "@ikefakis/react-polaroid-photo-deck/style.css";
 
 const cards = [
-  { url: 'https://picsum.photos/id/1025/800/1100' },
-  { url: 'https://picsum.photos/id/1011/1200/800' },
-  { url: 'https://picsum.photos/id/1003/820/1180' }
-]
+  { url: "https://picsum.photos/id/1025/800/1100" },
+  { url: "https://picsum.photos/id/1011/1200/800" },
+  { url: "https://picsum.photos/id/1003/820/1180" },
+];
 
 export function Example() {
-  return <Deck cards={cards} style={{ width: '100vw', height: '100vh' }} />
+  return <Deck cards={cards} style={{ width: "100vw", height: "100vh" }} />;
 }
 ```
 
@@ -37,14 +37,14 @@ Each card only needs a final image URL. Orientation is detected automatically wh
 
 ```ts
 type Card = {
-  url: string
-}
+  url: string;
+};
 
 type DeckProps = {
-  cards: Card[]
-  className?: string
-  style?: React.CSSProperties
-}
+  cards: Card[];
+  className?: string;
+  style?: React.CSSProperties;
+};
 ```
 
 ## Repository Structure

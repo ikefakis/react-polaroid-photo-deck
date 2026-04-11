@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'npm version target (patch, minor, major, prerelease, or an exact semver)'
+        description: "npm version target (patch, minor, major, prerelease, or an exact semver)"
         required: true
-        default: 'patch'
+        default: "patch"
 
 concurrency:
   group: publish-package

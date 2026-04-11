@@ -1,10 +1,13 @@
 {
-  "printWidth": 140,
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
-  "semi": false,
-  "singleQuote": true,
-  "trailingComma": "none",
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
   "bracketSpacing": true,
-  "jsxBracketSameLine": true
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf"
 }
