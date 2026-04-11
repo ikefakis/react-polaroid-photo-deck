@@ -91,3 +91,7 @@ The publish workflow:
 ## Deploy
 
 The GitHub Pages workflow runs `npm run build:playground` and deploys the generated `dist` directory.
+
+## License
+
+MIT. See [LICENSE](./LICENSE).

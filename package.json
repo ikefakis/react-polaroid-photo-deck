@@ -2,6 +2,7 @@
   "name": "@ikefakis/react-polaroid-photo-deck",
   "version": "3.0.4",
   "description": "A beautiful polaroid style photo deck",
+  "license": "MIT",
   "keywords": [
     "react",
     "polaroid",
